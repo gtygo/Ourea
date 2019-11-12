@@ -1,7 +1,13 @@
 package main
+
 import (
 	"flag"
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/gtygo/ourea/server"
 )
 
 var (
@@ -18,4 +24,13 @@ func init() {
 func main() {
 	flag.Parse()
 	fmt.Println(node, port)
+
+	server := server.NewServer()
+	fmt.Println(server)
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Kill, os.Interrupt, syscall.SIGHUP, syscall.SIGTERM, syscall.SIGQUIT)
+
+	<-quit
+
 }
