@@ -7,8 +7,11 @@ import (
 	"log"
 )
 
+const defaultDBFileMode = 0600
+
 var (
-	bucketName = []byte("B1")
+	logsName   = []byte("logs")
+	bucketName = []byte("bucket")
 
 	KeyNotFoundError = errors.New("not found")
 )
@@ -18,15 +21,64 @@ type Store struct {
 	path string
 }
 
-func NewStore(path string) () {
+type Options struct {
+	BoltOptions *bolt.Options
+	Path        string
+	NoSync      bool
+}
 
+func (o *Options) isReadOnly() bool {
+	return o != nil && o.BoltOptions != nil && o.BoltOptions.ReadOnly
+}
+
+func NewStore(path string) (*Store, error) {
+	return New(Options{
+		BoltOptions: nil,
+		Path:        path,
+		NoSync:      false,
+	})
+}
+
+//New use the open BoltDB and prepare for raft backend
+func New(options Options) (*Store, error) {
+	DB, err := bolt.Open(options.Path, defaultDBFileMode, options.BoltOptions)
+	if err != nil {
+		return nil, err
+	}
+	DB.NoSync = options.NoSync
+
+	store := &Store{
+		conn: DB,
+		path: options.Path,
+	}
+
+	if !options.isReadOnly() {
+		if err := store.initialize(); err != nil {
+			store.Close()
+			return nil, err
+		}
+	}
+	return store, nil
 }
 
 func (b *Store) initialize() error {
-	return
+	tx, err := b.conn.Begin(true)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	if _, err := tx.CreateBucketIfNotExists(logsName); err != nil {
+		return err
+	}
+	if _, err := tx.CreateBucketIfNotExists(bucketName); err != nil {
+		return err
+	}
+
+	return tx.Commit()
 }
 func (b *Store) Close() error {
-
+	return b.conn.Close()
 }
 
 func (b *Store) Set(k, v []byte) error {
