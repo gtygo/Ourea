@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/gtygo/ourea/server"
+	"github.com/gtygo/Ourea/server"
 )
 
 var (
