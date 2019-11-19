@@ -34,11 +34,8 @@ func (server *Server) Start(){
 		default:
 			conn,err:=server.listener.Accept()
 			if err!=nil{
-				fmt.Println(err.Error())
 				continue
 			}
-			fmt.Println(conn)
-			//todo : client
 		}
 
 	}
