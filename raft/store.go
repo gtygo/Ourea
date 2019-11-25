@@ -167,7 +167,7 @@ func (b *Store) GetLog(idx uint64, log *Log) error {
 }
 
 func (b *Store) StoreLog(log *Log) error {
-	return b.StoreLogs([] *Log{log})
+	return b.StoreLogs([]*Log{log})
 }
 
 func (b *Store) StoreLogs(logs []*Log) error {

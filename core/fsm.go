@@ -15,7 +15,7 @@ type fsm struct {
 }
 
 func NewFsm(path string) (*fsm, error) {
-	db, err := NewBadgerDB(path, path)
+	db, err := NewDB(path, path)
 	if err != nil {
 		return nil, err
 	}
@@ -37,6 +37,6 @@ func (f *fsm) SnapShot() (hraft.FSMSnapshot, error) {
 	return nil, nil
 }
 
-func (f *fsm)Restore(readClose io.ReadCloser)error{
+func (f *fsm) Restore(readClose io.ReadCloser) error {
 	return nil
 }

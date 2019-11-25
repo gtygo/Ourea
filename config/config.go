@@ -5,7 +5,7 @@ type Config struct {
 	Path string
 	Id   string
 	Join string
-	addr string
+	Addr string
 }
 
 func NewConfig(port, path, id, join, addr string) *Config {
@@ -14,6 +14,6 @@ func NewConfig(port, path, id, join, addr string) *Config {
 		Path: path,
 		Id:   id,
 		Join: join,
-		addr: addr,
+		Addr: addr,
 	}
 }

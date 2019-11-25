@@ -12,9 +12,9 @@ import (
 )
 
 var (
-	port     string
-	path     string
-	id      string
+	port string
+	path string
+	id   string
 	addr string
 )
 
@@ -27,9 +27,9 @@ func init() {
 
 func main() {
 	flag.Parse()
-	conf:=config.NewConfig(port,path,id,"",addr)
+	conf := config.NewConfig(port, path, id, "", addr)
 
-	svr := server.NewServer()
+	svr := server.NewServer(conf)
 	fmt.Println(svr)
 
 	quit := make(chan os.Signal, 1)
