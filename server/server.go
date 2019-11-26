@@ -26,7 +26,7 @@ func NewServer(config *config.Config) *Server {
 	}
 	listener, err := net.Listen("tcp", config.Port)
 	if err != nil {
-		fmt.Println("gfdsdfgfds", err)
+		panic(err.Error())
 	}
 	server.listener = listener
 	server.logger.Printf("server listening in %s", config.Port)

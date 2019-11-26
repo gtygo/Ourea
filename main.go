@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"github.com/gtygo/Ourea/config"
 	"os"
 	"os/signal"
@@ -16,6 +15,7 @@ var (
 	path string
 	id   string
 	addr string
+	join string
 )
 
 func init() {
@@ -23,14 +23,14 @@ func init() {
 	flag.StringVar(&addr, "addr", ":19090", "raft bind address")
 	flag.StringVar(&path, "path", "./data/", "data directory")
 	flag.StringVar(&id, "id", "4235", "raft node id")
+	flag.StringVar(&join,"join","","join to cluster")
 }
 
 func main() {
 	flag.Parse()
-	conf := config.NewConfig(port, path, id, "", addr)
+	conf := config.NewConfig(port, path, id, join, addr)
 
 	svr := server.NewServer(conf)
-	fmt.Println(svr)
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Kill, os.Interrupt, syscall.SIGHUP, syscall.SIGTERM, syscall.SIGQUIT)
