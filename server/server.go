@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"github.com/gtygo/Ourea/config"
 	"github.com/gtygo/Ourea/core"
 	"github.com/siddontang/goredis"
@@ -23,9 +24,9 @@ func NewServer(config *config.Config) *Server {
 	server := &Server{
 		logger: log.New(os.Stderr, "[server] ", log.LstdFlags),
 	}
-	listener, err := net.Listen("tcp", "8090")
+	listener, err := net.Listen("tcp", config.Port)
 	if err != nil {
-		panic(err.Error())
+		fmt.Println("gfdsdfgfds", err)
 	}
 	server.listener = listener
 	server.logger.Printf("server listening in %s", config.Port)
@@ -59,6 +60,7 @@ func (server *Server) Start() {
 			if err != nil {
 				continue
 			}
+			fmt.Println(conn)
 		}
 
 	}

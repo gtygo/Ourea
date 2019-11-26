@@ -19,10 +19,10 @@ var (
 )
 
 func init() {
-	flag.StringVar(&port, "port", "4080", "server listing port")
+	flag.StringVar(&port, "port", "127.0.0.1:5379", "server listing port")
 	flag.StringVar(&addr, "addr", ":19090", "raft bind address")
-	flag.StringVar(&path, "path", "./", "data directory")
-	flag.StringVar(&id, "id", "", "raft node id")
+	flag.StringVar(&path, "path", "./data/", "data directory")
+	flag.StringVar(&id, "id", "4235", "raft node id")
 }
 
 func main() {
