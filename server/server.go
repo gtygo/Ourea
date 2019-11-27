@@ -15,7 +15,6 @@ type Server struct {
 
 	logger *log.Logger
 
-	//TODO : db
 	store *core.Store
 }
 
