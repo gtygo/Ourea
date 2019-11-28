@@ -3,6 +3,7 @@ package server
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"github.com/gtygo/Ourea/core"
 	"github.com/siddontang/goredis"
 	"io"
@@ -94,4 +95,46 @@ func (c *Client) handleRequest(req [][]byte) error {
 	}
 	return error
 
+}
+func (c *Client) Get() (string, error) {
+	return "", nil
+}
+func (c *Client) Set() error {
+	return nil
+}
+func (c *Client) Del() error {
+	return nil
+}
+func (c *Client) SnapShot() error {
+	return nil
+}
+func (c *Client) Join() error {
+	return nil
+}
+func (c *Client) Leave() error {
+	return nil
+}
+
+func (c *Client) Resp(v interface{}) error {
+	var err error = nil
+	switch val := v.(type) {
+	case []interface{}:
+		err = c.writer.WriteArray(val)
+	case []byte:
+		err = c.writer.WriteBulk(val)
+	case nil:
+		err = c.writer.WriteBulk(nil)
+	case int64:
+		err = c.writer.WriteInteger(val)
+	case string:
+		err = c.writer.WriteString(val)
+	case error:
+		err = c.writer.WriteError(val)
+	default:
+		err = errors.New("resp type error")
+	}
+	if err != nil {
+		return err
+	}
+	return c.writer.Flush()
 }
