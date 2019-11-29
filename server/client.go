@@ -13,6 +13,8 @@ import (
 	"strings"
 )
 
+var paramsErr = errors.New("params error")
+
 type Client struct {
 	server *Server
 
@@ -67,11 +69,7 @@ func (c *Client) handleConn() {
 }
 
 func (c *Client) handleRequest(req [][]byte) error {
-	var (
-		error error
-		//val string
-	)
-
+	//todo add error
 	if len(req) == 0 {
 		c.cmd = ""
 		c.args = nil
@@ -84,35 +82,113 @@ func (c *Client) handleRequest(req [][]byte) error {
 
 	switch c.cmd {
 	case "get":
+		v, err := c.Get()
+		if err != nil {
+			return err
+		}
+		err = c.Resp(v)
+		if err != nil {
+			return err
+		}
 	case "set":
+		err := c.Set()
+		if err != nil {
+			return err
+		}
+		c.Resp("OK")
 	case "del":
+		err := c.Del()
+		if err != nil {
+			return err
+		}
+		c.Resp("OK")
 	case "join":
+		err := c.Join()
+		if err != nil {
+			return err
+		}
+		c.Resp("OK")
 	case "leave":
+		err := c.Leave()
+		if err != nil {
+			return err
+		}
+		c.Resp("OK")
 	case "ping":
+		if len(c.args) != 0 {
+			return paramsErr
+		}
+		c.Resp("PONG")
 	case "snapshot":
+		err := c.SnapShot()
+		if err != nil {
+			return err
+		}
+		c.Resp("OK")
 	default:
-
+		return paramsErr
 	}
-	return error
-
+	return nil
 }
 func (c *Client) Get() (string, error) {
-	return "", nil
+	if len(c.args) != 1 {
+		return "", paramsErr
+	}
+	key := string(c.args[0])
+	v, err := c.store.Get(key)
+	if err != nil {
+		return "", err
+	}
+	return v, nil
 }
 func (c *Client) Set() error {
+	if len(c.args) != 2 {
+		return paramsErr
+	}
+	key := string(c.args[0])
+	val := string(c.args[1])
+	err := c.store.Set(key, val)
+	if err != nil {
+		return err
+
+	}
 	return nil
 }
 func (c *Client) Del() error {
+	if len(c.args) != 1 {
+		return paramsErr
+	}
+	key := string(c.args[0])
+	err := c.store.Delete(key)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 func (c *Client) SnapShot() error {
+	if len(c.args) != 0 {
+		return paramsErr
+	}
+	err := c.store.SnapShot()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 func (c *Client) Join() error {
-	return nil
+	if len(c.args) != 2 {
+		return paramsErr
+	}
+	addr := string(c.args[0])
+	id := string(c.args[0])
+	return c.store.Join(id, addr)
 }
 func (c *Client) Leave() error {
-	return nil
+	if len(c.args) != 1 {
+		return paramsErr
+	}
+	id := string(c.args[0])
+	return c.store.Leave(id)
 }
 
 func (c *Client) Resp(v interface{}) error {
