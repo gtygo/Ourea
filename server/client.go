@@ -56,12 +56,14 @@ func (c *Client) handleConn() {
 		c.args = nil
 
 		req, err := c.reader.ParseRequest()
-		if err != nil || err != io.EOF {
+		if err != nil && err != io.EOF {
 			c.logger.Println(err.Error())
+			return
+		} else if err != nil {
 			return
 		}
 		err = c.handleRequest(req)
-		if err != nil || err != io.EOF {
+		if err != nil && err != io.EOF {
 			c.logger.Println(err.Error())
 			return
 		}

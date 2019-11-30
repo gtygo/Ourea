@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"github.com/gtygo/Ourea/config"
 	"github.com/gtygo/Ourea/core"
 	"github.com/siddontang/goredis"
@@ -59,7 +58,7 @@ func (server *Server) Start() {
 			if err != nil {
 				continue
 			}
-			fmt.Println(conn)
+			InitClient(conn, server)
 		}
 
 	}
