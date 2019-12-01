@@ -19,33 +19,39 @@ type Server struct {
 
 //启动ouera后台服务端，进行一些初始化配置
 func NewServer(config *config.Config) *Server {
+	var err error
 	server := &Server{
 		logger: log.New(os.Stderr, "[server] ", log.LstdFlags),
 	}
-	listener, err := net.Listen("tcp", config.Port)
-	if err != nil {
-		panic(err.Error())
-	}
-	server.listener = listener
-	server.logger.Printf("server listening in %s", config.Port)
 
-	store, err := core.NewStore(config.Path, config.Addr)
+	server.store, err = core.NewStore(config.Path, config.Addr)
 	if err != nil {
 		panic(err.Error())
 	}
-	server.store = store
+
 	server.logger.Printf("server init store node ,DB path: %s ,link address: %s", config.Path, config.Addr)
-
+	isStrap := config.Join == ""
+	err = server.store.Open(isStrap, config.Id)
+	if err != nil {
+		server.logger.Println(err)
+		panic(err.Error())
+	}
 	//加入新节点
-	if config.Join != "" {
+	if !isStrap {
 		redisClient := goredis.NewClient(config.Join, "")
 		server.logger.Printf("request join to %s", config.Join)
 		_, err := redisClient.Do("join", config.Path, config.Id)
 		if err != nil {
 			server.logger.Println(err)
+			panic(err.Error())
 		}
 		redisClient.Close()
 	}
+	server.listener, err = net.Listen("tcp", config.Port)
+	if err != nil {
+		panic(err.Error())
+	}
+	server.logger.Printf("server listening in %s", config.Port)
 
 	return server
 }

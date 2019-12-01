@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+	"github.com/hashicorp/raft"
 
 	"github.com/boltdb/bolt"
 	"github.com/ugorji/go/codec"
@@ -21,6 +22,45 @@ var (
 type Store struct {
 	db   *bolt.DB
 	path string
+}
+
+func (b *Store) GetLog(index uint64, log *raft.Log) error {
+	tx, err := b.db.Begin(false)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	bucket := tx.Bucket(logsName)
+	v := bucket.Get(uint64ToByte(index))
+	if v == nil {
+		return KeyNotFoundError
+	}
+	return decodeMsgPack(v, log)
+}
+
+func (b *Store) StoreLog(log *raft.Log) error {
+	return b.StoreLogs([]*raft.Log{log})
+}
+
+func (b *Store) StoreLogs(logs []*raft.Log) error {
+	tx, err := b.db.Begin(true)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	for _, log := range logs {
+		k := uint64ToByte(log.Index)
+		v, err := encodeMsgPack(log)
+		if err != nil {
+			return err
+		}
+		bucket := tx.Bucket(logsName)
+		if err := bucket.Put(k, v.Bytes()); err != nil {
+			return err
+		}
+	}
+	return tx.Commit()
 }
 
 type Options struct {
@@ -150,45 +190,6 @@ func (b *Store) LastIndex() (uint64, error) {
 	} else {
 		return bytesToUint64(first), nil
 	}
-}
-
-func (b *Store) GetLog(idx uint64, log *Log) error {
-	tx, err := b.db.Begin(false)
-	if err != nil {
-		return err
-	}
-	defer tx.Rollback()
-	bucket := tx.Bucket(logsName)
-	v := bucket.Get(uint64ToByte(idx))
-	if v == nil {
-		return KeyNotFoundError
-	}
-	return decodeMsgPack(v, log)
-}
-
-func (b *Store) StoreLog(log *Log) error {
-	return b.StoreLogs([]*Log{log})
-}
-
-func (b *Store) StoreLogs(logs []*Log) error {
-	tx, err := b.db.Begin(true)
-	if err != nil {
-		return err
-	}
-	defer tx.Rollback()
-
-	for _, log := range logs {
-		k := uint64ToByte(log.Index)
-		v, err := encodeMsgPack(log)
-		if err != nil {
-			return err
-		}
-		bucket := tx.Bucket(logsName)
-		if err := bucket.Put(k, v.Bytes()); err != nil {
-			return err
-		}
-	}
-	return tx.Commit()
 }
 
 func (b *Store) DeleteRange(min, max uint64) error {

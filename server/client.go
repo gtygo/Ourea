@@ -81,7 +81,7 @@ func (c *Client) handleRequest(req [][]byte) error {
 	}
 
 	c.logger.Printf("processing %s command", c.cmd)
-
+	//c.logger.Printf("c.cmd: ", c.cmd)
 	switch c.cmd {
 	case "get":
 		v, err := c.Get()
@@ -127,9 +127,12 @@ func (c *Client) handleRequest(req [][]byte) error {
 			return err
 		}
 		c.Resp("OK")
+	case "command":
+		c.Resp("OK")
 	default:
 		return paramsErr
 	}
+
 	return nil
 }
 func (c *Client) Get() (string, error) {
@@ -139,6 +142,7 @@ func (c *Client) Get() (string, error) {
 	key := string(c.args[0])
 	v, err := c.store.Get(key)
 	if err != nil {
+		c.logger.Printf("got error when get : %s",key)
 		return "", err
 	}
 	return v, nil

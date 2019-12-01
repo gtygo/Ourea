@@ -23,7 +23,7 @@ func init() {
 	flag.StringVar(&addr, "addr", ":19090", "raft bind address")
 	flag.StringVar(&path, "path", "./data/", "data directory")
 	flag.StringVar(&id, "id", "4235", "raft node id")
-	flag.StringVar(&join,"join","","join to cluster")
+	flag.StringVar(&join, "join", "", "join to cluster")
 }
 
 func main() {
