@@ -13,8 +13,6 @@ type fsm struct {
 	logger *log.Logger
 }
 
-
-
 //NewFsm return  a fsm instance
 func NewFsm(path string) (*fsm, error) {
 	db, err := NewDB(path, path)
@@ -29,20 +27,24 @@ func NewFsm(path string) (*fsm, error) {
 
 //Get return value
 func (f *fsm) Get(key string) (string, error) {
-	f.logger.Printf("get key: %s from fsm store",key)
+	f.logger.Printf("get key: %s from fsm store", key)
 	v, err := f.db.Get([]byte(key))
 	if err != nil {
+		f.logger.Fatalf("get key %s error: %s", key, err)
 		return "", err
 	}
+	f.logger.Printf("get key :%s success: %s", key, v)
 	return string(v), nil
 }
 
-func (f *fsm)Set(key ,value string)error{
-	f.logger.Printf("set key: %s vale: %s from fsm store",key,value)
-	err:=f.db.Set([]byte(key),[]byte(value))
-	if err!=nil{
+func (f *fsm) Set(key, value string) error {
+	f.logger.Printf("set key: %s value: %s from fsm store", key, value)
+	err := f.db.Set([]byte(key), []byte(value))
+	if err != nil {
+		f.logger.Fatalf("set key: %s value: %s error: %s ", key, value, err)
 		return err
 	}
+
 	return nil
 }
 
@@ -54,10 +56,6 @@ func (f *fsm) Snapshot() (hraft.FSMSnapshot, error) {
 	panic("implement me")
 }
 
-func (f *fsm) SnapShot() (hraft.FSMSnapshot, error) {
-	return nil, nil
-}
-
 func (f *fsm) Restore(readClose io.ReadCloser) error {
-	return nil
+	panic("implement")
 }

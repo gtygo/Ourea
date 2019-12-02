@@ -29,10 +29,35 @@ func NewDB(DBdir, valueDir string) (*BDB, error) {
 	}, nil
 }
 func (b *BDB) Get(key []byte) ([]byte, error) {
-	return nil, nil
+
+	value := []byte{}
+	err := b.db.View(func(txn *badger.Txn) error {
+		item, err := txn.Get(key)
+		if err != nil {
+			return err
+		}
+
+		err = item.Value(func(val []byte) error {
+			value = append([]byte{}, val...)
+			return nil
+		})
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+
+	return value, err
 }
 func (b *BDB) Set(key, value []byte) error {
-	return nil
+	err := b.db.Update(func(txn *badger.Txn) error {
+		err := txn.Set(key, value)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	return err
 }
 func (b *BDB) Delete(key []byte) (bool, error) {
 	return false, nil
