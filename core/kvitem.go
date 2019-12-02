@@ -60,7 +60,16 @@ func (b *BDB) Set(key, value []byte) error {
 	return err
 }
 func (b *BDB) Delete(key []byte) (bool, error) {
-	return false, nil
+	err := b.db.Update(func(txn *badger.Txn) error {
+		if err := txn.Delete(key); err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }
 func (b *BDB) SnapShotItems() <-chan DataItem {
 	s := make(chan DataItem)
