@@ -3,8 +3,8 @@ package core
 type DataItem interface{}
 
 type DB interface {
-	Get(key []byte) ([]byte, error)
-	Set(key, value []byte) error
-	Delete(key []byte) (bool, error)
-	SnapShotItems() <-chan DataItem
+	get(key []byte) ([]byte, error)
+	set(key, value []byte) error
+	delete(key []byte) (bool, error)
+	snapShotItems() <-chan DataItem
 }

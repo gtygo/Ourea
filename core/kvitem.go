@@ -28,7 +28,7 @@ func NewDB(DBdir, valueDir string) (*BDB, error) {
 		logger:   log.New(os.Stderr, "[db] ", log.LstdFlags),
 	}, nil
 }
-func (b *BDB) Get(key []byte) ([]byte, error) {
+func (b *BDB) get(key []byte) ([]byte, error) {
 
 	value := []byte{}
 	err := b.db.View(func(txn *badger.Txn) error {
@@ -49,7 +49,7 @@ func (b *BDB) Get(key []byte) ([]byte, error) {
 
 	return value, err
 }
-func (b *BDB) Set(key, value []byte) error {
+func (b *BDB) set(key, value []byte) error {
 	err := b.db.Update(func(txn *badger.Txn) error {
 		err := txn.Set(key, value)
 		if err != nil {
@@ -59,7 +59,7 @@ func (b *BDB) Set(key, value []byte) error {
 	})
 	return err
 }
-func (b *BDB) Delete(key []byte) (bool, error) {
+func (b *BDB) delete(key []byte) (bool, error) {
 	err := b.db.Update(func(txn *badger.Txn) error {
 		if err := txn.Delete(key); err != nil {
 			return err
@@ -71,7 +71,7 @@ func (b *BDB) Delete(key []byte) (bool, error) {
 	}
 	return true, nil
 }
-func (b *BDB) SnapShotItems() <-chan DataItem {
+func (b *BDB) snapShotItems() <-chan DataItem {
 	s := make(chan DataItem)
 	return s
 }

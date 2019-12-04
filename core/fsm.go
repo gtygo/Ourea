@@ -27,7 +27,7 @@ func NewFsm(path string) (*fsm, error) {
 
 //Get return value
 func (f *fsm) Get(key string) (string, error) {
-	v, err := f.db.Get([]byte(key))
+	v, err := f.db.get([]byte(key))
 	if err != nil {
 		f.logger.Fatalf("get key %s error: %s", key, err)
 		return "", err
@@ -36,7 +36,8 @@ func (f *fsm) Get(key string) (string, error) {
 }
 
 func (f *fsm) Set(key, value string) error {
-	err := f.db.Set([]byte(key), []byte(value))
+	f.logger.Println("set : key,value",key,value)
+	err := f.db.set([]byte(key), []byte(value))
 	if err != nil {
 		f.logger.Fatalf("set key: %s value: %s error: %s ", key, value, err)
 		return err
