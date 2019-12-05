@@ -45,7 +45,7 @@ func (s *Store) Set(key, value string) error {
 }
 
 func (s *Store) Delete(key string) error {
-	return nil
+	return s.fsm.Delete(key)
 }
 
 func (s *Store) Join(id, addr string) error {

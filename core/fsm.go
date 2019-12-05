@@ -36,12 +36,21 @@ func (f *fsm) Get(key string) (string, error) {
 }
 
 func (f *fsm) Set(key, value string) error {
-	f.logger.Println("set : key,value",key,value)
 	err := f.db.set([]byte(key), []byte(value))
 	if err != nil {
 		f.logger.Fatalf("set key: %s value: %s error: %s ", key, value, err)
 		return err
 	}
+	return nil
+}
+
+func (f *fsm) Delete(key string) error {
+	isSuccess, err := f.db.delete([]byte(key))
+	if err != nil || !isSuccess {
+		f.logger.Fatalf("delete key: %s error: %s ", key, err)
+		return err
+	}
+
 	return nil
 }
 

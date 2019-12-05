@@ -1,7 +1,7 @@
 package core
 
 import (
-	"github.com/gtygo/Ourea/tools"
+	"math/rand"
 	"testing"
 )
 
@@ -49,12 +49,12 @@ func generateTestTableAndKeyList(thor, keyRange int) (map[string]res, []string) 
 	keyList := make([]string, thor)
 
 	for i := 0; i < thor; i++ {
-		k := tools.RandGenerateStr(keyRange)
+		k := RandGenerateStr(keyRange)
 		if k == "" || k == " " {
-			k = tools.RandGenerateStr(keyRange)
+			k = RandGenerateStr(keyRange)
 		}
 		if _, ok := table[k]; !ok {
-			val := tools.RandGenerateStr(keyRange * 10)
+			val := RandGenerateStr(keyRange * 10)
 			table[k] = res{
 				ans: val,
 			}
@@ -62,4 +62,16 @@ func generateTestTableAndKeyList(thor, keyRange int) (map[string]res, []string) 
 		}
 	}
 	return table, keyList
+}
+
+var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ{}:~!@#$%^&*()_+|:?></")
+
+func RandGenerateStr(rang int) string {
+	n := rand.Intn(rang)
+	n++
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+	}
+	return string(b)
 }
