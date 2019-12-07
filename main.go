@@ -2,11 +2,12 @@ package main
 
 import (
 	"flag"
-	"github.com/gtygo/Ourea/config"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/gtygo/Ourea/config"
 	"github.com/gtygo/Ourea/server"
 )
 
@@ -27,9 +28,10 @@ func init() {
 }
 
 func main() {
+
 	flag.Parse()
 	conf := config.NewConfig(port, path, id, join, addr)
-
+	log.Printf("start listening : %s", port)
 	svr := server.NewServer(conf)
 
 	quit := make(chan os.Signal, 1)
