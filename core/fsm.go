@@ -29,7 +29,7 @@ func NewFsm(path string) (*fsm, error) {
 func (f *fsm) Get(key string) (string, error) {
 	v, err := f.db.get([]byte(key))
 	if err != nil {
-		f.logger.Fatalf("get key %s error: %s", key, err)
+		f.logger.Printf("get key %s error: %s", key, err)
 		return "", err
 	}
 	return string(v), nil

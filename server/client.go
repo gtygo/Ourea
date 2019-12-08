@@ -13,7 +13,10 @@ import (
 	"strings"
 )
 
-var paramsErr = errors.New("params error")
+var (
+	paramsErr      = errors.New("params error")
+	keyNotFoundErr = errors.New("key not found")
+)
 
 type Client struct {
 	server *Server
@@ -86,34 +89,33 @@ func (c *Client) handleRequest(req [][]byte) error {
 	case "get":
 		v, err := c.Get()
 		if err != nil {
-			return err
+			c.Resp("Get failed: " + err.Error())
+			break
 		}
-		err = c.Resp(v)
-		if err != nil {
-			return err
-		}
+		c.Resp(v)
 	case "set":
 		err := c.Set()
 		if err != nil {
-			return err
+			c.Resp("Set failed: " + err.Error())
+			break
 		}
 		c.Resp("OK")
 	case "del":
 		err := c.Del()
 		if err != nil {
-			return err
+			c.Resp("Delete failed: " + err.Error())
 		}
 		c.Resp("OK")
 	case "join":
 		err := c.Join()
 		if err != nil {
-			return err
+			c.Resp("Join failed: " + err.Error())
 		}
 		c.Resp("OK")
 	case "leave":
 		err := c.Leave()
 		if err != nil {
-			return err
+			c.Resp("Leave failed: " + err.Error())
 		}
 		c.Resp("OK")
 	case "ping":
@@ -141,8 +143,9 @@ func (c *Client) Get() (string, error) {
 	}
 	key := string(c.args[0])
 	v, err := c.store.Get(key)
+	c.logger.Println("get information :", v, err)
 	if err != nil {
-		c.logger.Printf("got error when get : %s",key)
+		c.logger.Println("got error when get : %s", key)
 		return "", err
 	}
 	return v, nil
