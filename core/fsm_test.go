@@ -15,7 +15,7 @@ var (
 	dbPath   = "../tools/test/"
 )
 
-func TestFsm_GetAndSet(t *testing.T) {
+func _TestFsm_GetAndSet(t *testing.T) {
 	fsm, _ := NewFsm(dbPath)
 
 	table, keyList := generateTestTableAndKeyList(caseNum, keyRange)
