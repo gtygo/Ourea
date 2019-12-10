@@ -1,6 +1,6 @@
 syntax = "proto2";
 
-package strore;
+package core;
 
 message ProtoKVItem {
     optional bytes key = 1;
