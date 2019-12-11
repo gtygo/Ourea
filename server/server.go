@@ -34,7 +34,7 @@ func NewServer(config *config.Config) *Server {
 	err = server.store.Open(isStrap, config.Id)
 	if err != nil {
 		server.logger.Println(err)
-		panic(err.Error())
+		//panic(err.Error())
 	}
 	//加入新节点
 	if !isStrap {
