@@ -14,8 +14,9 @@ import (
 )
 
 var (
-	paramsErr      = errors.New("params error")
-	keyNotFoundErr = errors.New("key not found")
+	ErrParams        = errors.New("ERR params invalid")
+	ErrRespType      = errors.New("ERR resp type invalid")
+	ErrCmdNotSupport = errors.New("ERR command not supported")
 )
 
 type Client struct {
@@ -53,7 +54,9 @@ func InitClient(conn net.Conn, server *Server) {
 }
 
 func (c *Client) handleConn() {
-	defer c.conn.Close()
+	defer func(c *Client) {
+		c.conn.Close()
+	}(c)
 	for {
 		c.cmd = ""
 		c.args = nil
@@ -82,64 +85,56 @@ func (c *Client) handleRequest(req [][]byte) error {
 		c.cmd = strings.ToLower(string(req[0]))
 		c.args = req[1:]
 	}
+	var (
+		err error
+		v   string
+	)
 
 	c.logger.Printf("processing %s command", c.cmd)
 	//c.logger.Printf("c.cmd: ", c.cmd)
 	switch c.cmd {
 	case "get":
-		v, err := c.Get()
-		if err != nil {
-			c.Resp("Get failed: " + err.Error())
-			break
+		if v, err = c.Get(); err == nil {
+			c.Resp(v)
 		}
-		c.Resp(v)
 	case "set":
-		err := c.Set()
-		if err != nil {
-			c.Resp("Set failed: " + err.Error())
-			break
+		if err = c.Set(); err == nil {
+			c.Resp("OK")
 		}
-		c.Resp("OK")
 	case "del":
-		err := c.Del()
-		if err != nil {
-			c.Resp("Delete failed: " + err.Error())
+		if err = c.Del(); err == nil {
+			c.Resp("OK")
 		}
-		c.Resp("OK")
 	case "join":
-		err := c.Join()
-		if err != nil {
-			c.Resp("Join failed: " + err.Error())
+		if err = c.Join(); err == nil {
+			c.Resp("OK")
 		}
-		c.Resp("OK")
 	case "leave":
-		err := c.Leave()
-		if err != nil {
-			c.Resp("Leave failed: " + err.Error())
+		if err = c.Leave(); err == nil {
+			c.Resp("OK")
 		}
-		c.Resp("OK")
 	case "ping":
 		if len(c.args) != 0 {
-			return paramsErr
+			err = ErrParams
 		}
 		c.Resp("PONG")
+		err = nil
 	case "snapshot":
-		err := c.SnapShot()
-		if err != nil {
-			return err
+		if err = c.SnapShot(); err == nil {
+			c.Resp("OK")
 		}
-		c.Resp("OK")
-	case "command":
-		c.Resp("OK")
 	default:
-		return paramsErr
+		err = ErrCmdNotSupport
+	}
+	if err != nil {
+		c.Resp(err)
 	}
 
 	return nil
 }
 func (c *Client) Get() (string, error) {
 	if len(c.args) != 1 {
-		return "", paramsErr
+		return "", ErrParams
 	}
 	key := string(c.args[0])
 	v, err := c.store.Get(key)
@@ -152,7 +147,7 @@ func (c *Client) Get() (string, error) {
 }
 func (c *Client) Set() error {
 	if len(c.args) != 2 {
-		return paramsErr
+		return ErrParams
 	}
 	key := string(c.args[0])
 	val := string(c.args[1])
@@ -165,7 +160,7 @@ func (c *Client) Set() error {
 }
 func (c *Client) Del() error {
 	if len(c.args) != 1 {
-		return paramsErr
+		return ErrParams
 	}
 	key := string(c.args[0])
 	err := c.store.Delete(key)
@@ -176,7 +171,7 @@ func (c *Client) Del() error {
 }
 func (c *Client) SnapShot() error {
 	if len(c.args) != 0 {
-		return paramsErr
+		return ErrParams
 	}
 	err := c.store.SnapShot()
 	if err != nil {
@@ -186,7 +181,7 @@ func (c *Client) SnapShot() error {
 }
 func (c *Client) Join() error {
 	if len(c.args) != 2 {
-		return paramsErr
+		return ErrParams
 	}
 	addr := string(c.args[0])
 	id := string(c.args[0])
@@ -194,7 +189,7 @@ func (c *Client) Join() error {
 }
 func (c *Client) Leave() error {
 	if len(c.args) != 1 {
-		return paramsErr
+		return ErrParams
 	}
 	id := string(c.args[0])
 	return c.store.Leave(id)
