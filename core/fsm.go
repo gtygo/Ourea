@@ -1,11 +1,13 @@
 package core
 
 import (
+	"encoding/json"
 	"github.com/golang/protobuf/proto"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 
 	hraft "github.com/hashicorp/raft"
 )
@@ -15,7 +17,7 @@ type fsm struct {
 	logger *log.Logger
 }
 
-type snapShot struct{
+type snapShot struct {
 	db     DB
 	logger *log.Logger
 }
@@ -61,8 +63,19 @@ func (f *fsm) Delete(key string) error {
 	return nil
 }
 
-func (f *fsm) Apply(*hraft.Log) interface{} {
-	panic("implement me")
+func (f *fsm) Apply(log *hraft.Log) interface{} {
+	var c command
+	if err := json.Unmarshal(log.Data, &c); err != nil {
+		panic("failed to unmarshal raft log")
+	}
+	switch strings.ToLower(c.Op) {
+	case "set":
+		return f.Set(c.Key, c.Value)
+	case "delete":
+		return f.Delete(c.Key)
+	default:
+		panic("command type not support")
+	}
 }
 
 func (f *fsm) Snapshot() (hraft.FSMSnapshot, error) {
@@ -121,7 +134,7 @@ func (f *fsm) Restore(readClose io.ReadCloser) error {
 
 }
 
-func (f snapShot)Persist(sink hraft.SnapshotSink)error{
+func (f snapShot) Persist(sink hraft.SnapshotSink) error {
 	f.logger.Printf("Persist action in fsmSnapshot")
 	defer sink.Close()
 
