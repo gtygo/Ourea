@@ -2,7 +2,6 @@ package server
 
 import (
 	"bufio"
-	"bytes"
 	"errors"
 	"github.com/gtygo/Ourea/core"
 	"github.com/siddontang/goredis"
@@ -27,8 +26,6 @@ type Client struct {
 	cmd string
 
 	args [][]byte
-
-	buf bytes.Buffer
 
 	conn net.Conn
 
@@ -140,7 +137,7 @@ func (c *Client) Get() (string, error) {
 	v, err := c.store.Get(key)
 	c.logger.Println("get information :", v, err)
 	if err != nil {
-		c.logger.Println("got error when get : %s", key)
+		c.logger.Printf("got error when get : %s", key)
 		return "", err
 	}
 	return v, nil

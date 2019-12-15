@@ -40,7 +40,7 @@ func NewServer(config *config.Config) *Server {
 	if !isStrap {
 		redisClient := goredis.NewClient(config.Join, "")
 		server.logger.Printf("request join to %s", config.Join)
-		_, err := redisClient.Do("join", config.Path, config.Id)
+		_, err := redisClient.Do("join", config.Addr, config.Id)
 		if err != nil {
 			server.logger.Println(err)
 
