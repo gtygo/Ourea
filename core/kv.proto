@@ -1,8 +1,0 @@
-syntax = "proto2";
-
-package core;
-
-message ProtoKVItem {
-    optional bytes key = 1;
-    optional bytes value = 2;
-}
