@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+
+service crud {
+    rpc Set (SetRequest) returns (SetReply) {
+    }
+}
+
+message SetRequest {
+    string key = 1;
+    string value = 2;
+}
+
+message SetReply {
+    string message = 1;
+}
+
+
