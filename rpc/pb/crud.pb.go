@@ -110,24 +110,196 @@ func (m *SetReply) GetMessage() string {
 	return ""
 }
 
+type GetRequest struct {
+	Key                  string   `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetRequest) Reset()         { *m = GetRequest{} }
+func (m *GetRequest) String() string { return proto.CompactTextString(m) }
+func (*GetRequest) ProtoMessage()    {}
+func (*GetRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_478bbe1b22b2e995, []int{2}
+}
+
+func (m *GetRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetRequest.Unmarshal(m, b)
+}
+func (m *GetRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetRequest.Marshal(b, m, deterministic)
+}
+func (m *GetRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetRequest.Merge(m, src)
+}
+func (m *GetRequest) XXX_Size() int {
+	return xxx_messageInfo_GetRequest.Size(m)
+}
+func (m *GetRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetRequest proto.InternalMessageInfo
+
+func (m *GetRequest) GetKey() string {
+	if m != nil {
+		return m.Key
+	}
+	return ""
+}
+
+type GetReply struct {
+	Value                string   `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+	Message              string   `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetReply) Reset()         { *m = GetReply{} }
+func (m *GetReply) String() string { return proto.CompactTextString(m) }
+func (*GetReply) ProtoMessage()    {}
+func (*GetReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_478bbe1b22b2e995, []int{3}
+}
+
+func (m *GetReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetReply.Unmarshal(m, b)
+}
+func (m *GetReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetReply.Marshal(b, m, deterministic)
+}
+func (m *GetReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetReply.Merge(m, src)
+}
+func (m *GetReply) XXX_Size() int {
+	return xxx_messageInfo_GetReply.Size(m)
+}
+func (m *GetReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetReply proto.InternalMessageInfo
+
+func (m *GetReply) GetValue() string {
+	if m != nil {
+		return m.Value
+	}
+	return ""
+}
+
+func (m *GetReply) GetMessage() string {
+	if m != nil {
+		return m.Message
+	}
+	return ""
+}
+
+type DelRequest struct {
+	Key                  string   `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DelRequest) Reset()         { *m = DelRequest{} }
+func (m *DelRequest) String() string { return proto.CompactTextString(m) }
+func (*DelRequest) ProtoMessage()    {}
+func (*DelRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_478bbe1b22b2e995, []int{4}
+}
+
+func (m *DelRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DelRequest.Unmarshal(m, b)
+}
+func (m *DelRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DelRequest.Marshal(b, m, deterministic)
+}
+func (m *DelRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DelRequest.Merge(m, src)
+}
+func (m *DelRequest) XXX_Size() int {
+	return xxx_messageInfo_DelRequest.Size(m)
+}
+func (m *DelRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DelRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DelRequest proto.InternalMessageInfo
+
+func (m *DelRequest) GetKey() string {
+	if m != nil {
+		return m.Key
+	}
+	return ""
+}
+
+type DelReply struct {
+	Message              string   `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DelReply) Reset()         { *m = DelReply{} }
+func (m *DelReply) String() string { return proto.CompactTextString(m) }
+func (*DelReply) ProtoMessage()    {}
+func (*DelReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_478bbe1b22b2e995, []int{5}
+}
+
+func (m *DelReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DelReply.Unmarshal(m, b)
+}
+func (m *DelReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DelReply.Marshal(b, m, deterministic)
+}
+func (m *DelReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DelReply.Merge(m, src)
+}
+func (m *DelReply) XXX_Size() int {
+	return xxx_messageInfo_DelReply.Size(m)
+}
+func (m *DelReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_DelReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DelReply proto.InternalMessageInfo
+
+func (m *DelReply) GetMessage() string {
+	if m != nil {
+		return m.Message
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*SetRequest)(nil), "SetRequest")
 	proto.RegisterType((*SetReply)(nil), "SetReply")
+	proto.RegisterType((*GetRequest)(nil), "GetRequest")
+	proto.RegisterType((*GetReply)(nil), "GetReply")
+	proto.RegisterType((*DelRequest)(nil), "DelRequest")
+	proto.RegisterType((*DelReply)(nil), "DelReply")
 }
 
 func init() { proto.RegisterFile("crud.proto", fileDescriptor_478bbe1b22b2e995) }
 
 var fileDescriptor_478bbe1b22b2e995 = []byte{
-	// 135 bytes of a gzipped FileDescriptorProto
+	// 206 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4a, 0x2e, 0x2a, 0x4d,
 	0xd1, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x57, 0x32, 0xe1, 0xe2, 0x0a, 0x4e, 0x2d, 0x09, 0x4a, 0x2d,
 	0x2c, 0x4d, 0x2d, 0x2e, 0x11, 0x12, 0xe0, 0x62, 0xce, 0x4e, 0xad, 0x94, 0x60, 0x54, 0x60, 0xd4,
 	0xe0, 0x0c, 0x02, 0x31, 0x85, 0x44, 0xb8, 0x58, 0xcb, 0x12, 0x73, 0x4a, 0x53, 0x25, 0x98, 0xc0,
 	0x62, 0x10, 0x8e, 0x92, 0x0a, 0x17, 0x07, 0x58, 0x57, 0x41, 0x4e, 0xa5, 0x90, 0x04, 0x17, 0x7b,
-	0x6e, 0x6a, 0x71, 0x71, 0x62, 0x7a, 0x2a, 0x54, 0x1f, 0x8c, 0x6b, 0xa4, 0xce, 0xc5, 0x02, 0xb2,
-	0x49, 0x48, 0x9e, 0x8b, 0x39, 0x38, 0xb5, 0x44, 0x88, 0x5b, 0x0f, 0x61, 0x93, 0x14, 0xa7, 0x1e,
-	0xcc, 0x00, 0x25, 0x86, 0x24, 0x36, 0xb0, 0x5b, 0x8c, 0x01, 0x01, 0x00, 0x00, 0xff, 0xff, 0x14,
-	0x40, 0xb9, 0xc0, 0x99, 0x00, 0x00, 0x00,
+	0x6e, 0x6a, 0x71, 0x71, 0x62, 0x7a, 0x2a, 0x54, 0x1f, 0x8c, 0xab, 0x24, 0xc7, 0xc5, 0xe5, 0x8e,
+	0xc7, 0x6c, 0x25, 0x2b, 0x2e, 0x0e, 0x77, 0x98, 0x29, 0x70, 0x7b, 0x18, 0x91, 0xec, 0x41, 0x36,
+	0x9b, 0x09, 0xc3, 0x6c, 0x97, 0xd4, 0x1c, 0xdc, 0x66, 0xab, 0x70, 0x71, 0x80, 0xe5, 0xf1, 0xba,
+	0xd0, 0x28, 0x87, 0x8b, 0x05, 0x14, 0x16, 0x42, 0xf2, 0x5c, 0xcc, 0xc1, 0xa9, 0x25, 0x42, 0xdc,
+	0x7a, 0x88, 0xb0, 0x90, 0xe2, 0xd4, 0x83, 0x79, 0x51, 0x89, 0x01, 0xa4, 0xc0, 0x1d, 0xac, 0xc0,
+	0x1d, 0x59, 0x81, 0x3b, 0x42, 0x81, 0x12, 0x17, 0x9b, 0x4b, 0x6a, 0x4e, 0x6a, 0x49, 0xaa, 0x10,
+	0xb7, 0x1e, 0xc2, 0x61, 0x52, 0x9c, 0x7a, 0x30, 0x57, 0x28, 0x31, 0x24, 0xb1, 0x81, 0x83, 0xdc,
+	0x18, 0x10, 0x00, 0x00, 0xff, 0xff, 0x7b, 0x3d, 0xbf, 0x23, 0x80, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -143,6 +315,8 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type CrudClient interface {
 	Set(ctx context.Context, in *SetRequest, opts ...grpc.CallOption) (*SetReply, error)
+	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetReply, error)
+	Delete(ctx context.Context, in *DelRequest, opts ...grpc.CallOption) (*DelReply, error)
 }
 
 type crudClient struct {
@@ -162,9 +336,29 @@ func (c *crudClient) Set(ctx context.Context, in *SetRequest, opts ...grpc.CallO
 	return out, nil
 }
 
+func (c *crudClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetReply, error) {
+	out := new(GetReply)
+	err := c.cc.Invoke(ctx, "/crud/Get", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *crudClient) Delete(ctx context.Context, in *DelRequest, opts ...grpc.CallOption) (*DelReply, error) {
+	out := new(DelReply)
+	err := c.cc.Invoke(ctx, "/crud/Delete", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CrudServer is the server API for Crud service.
 type CrudServer interface {
 	Set(context.Context, *SetRequest) (*SetReply, error)
+	Get(context.Context, *GetRequest) (*GetReply, error)
+	Delete(context.Context, *DelRequest) (*DelReply, error)
 }
 
 // UnimplementedCrudServer can be embedded to have forward compatible implementations.
@@ -173,6 +367,12 @@ type UnimplementedCrudServer struct {
 
 func (*UnimplementedCrudServer) Set(ctx context.Context, req *SetRequest) (*SetReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Set not implemented")
+}
+func (*UnimplementedCrudServer) Get(ctx context.Context, req *GetRequest) (*GetReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+}
+func (*UnimplementedCrudServer) Delete(ctx context.Context, req *DelRequest) (*DelReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 
 func RegisterCrudServer(s *grpc.Server, srv CrudServer) {
@@ -197,6 +397,42 @@ func _Crud_Set_Handler(srv interface{}, ctx context.Context, dec func(interface{
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Crud_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CrudServer).Get(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/crud/Get",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CrudServer).Get(ctx, req.(*GetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Crud_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CrudServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/crud/Delete",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CrudServer).Delete(ctx, req.(*DelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Crud_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "crud",
 	HandlerType: (*CrudServer)(nil),
@@ -204,6 +440,14 @@ var _Crud_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Set",
 			Handler:    _Crud_Set_Handler,
+		},
+		{
+			MethodName: "Get",
+			Handler:    _Crud_Get_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _Crud_Delete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

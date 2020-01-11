@@ -15,6 +15,7 @@ const (
 )
 
 func StartServer() {
+	println("start server")
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatal("failed to listen:", err)
@@ -32,6 +33,7 @@ type server struct {
 
 func (s *server) Set(ctx context.Context, in *pb.SetRequest) (*pb.SetReply, error) {
 	log.Println("received: ", in.Key, in.Value)
+
 	return &pb.SetReply{
 		Message: "set success! " + in.Key + "---" + in.Value,
 	}, nil

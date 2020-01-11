@@ -2,14 +2,15 @@ package boltkv
 
 import (
 	"github.com/boltdb/bolt"
+	"github.com/gtygo/Ourea/db"
 )
 
 type BoltItem struct {
 	Db *bolt.DB
 }
 
-func Open() (*bolt.DB, error) {
-	db, err := bolt.Open("my.db", 0600, nil)
+func Open(opt db.Opt) (*bolt.DB, error) {
+	db, err := bolt.Open(opt.Name, opt.Mode, nil)
 	if err != nil {
 		return nil, err
 	}

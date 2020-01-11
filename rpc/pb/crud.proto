@@ -4,6 +4,12 @@ syntax = "proto3";
 service crud {
     rpc Set (SetRequest) returns (SetReply) {
     }
+
+    rpc Get (GetRequest) returns (GetReply) {
+    }
+
+    rpc Delete (DelRequest) returns (DelReply) {
+    }
 }
 
 message SetRequest {
@@ -15,4 +21,21 @@ message SetReply {
     string message = 1;
 }
 
+message GetRequest {
+    string key = 1;
+}
+
+message GetReply {
+    string value = 1;
+    string message = 2;
+}
+
+message DelRequest {
+    string key = 1;
+}
+
+message DelReply {
+    string message = 1;
+
+}
 
