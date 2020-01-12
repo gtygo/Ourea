@@ -3,7 +3,6 @@ package db
 import (
 	"github.com/gtygo/Ourea/boltkv"
 	"github.com/gtygo/Ourea/kv"
-	"os"
 )
 
 //DB maintains an item interface for implementing a database instance
@@ -11,14 +10,9 @@ type DB struct {
 	Item kv.Item
 }
 
-type Opt struct {
-	Name string
-	Mode os.FileMode
-}
-
 //NewDB return a DB instance
-func NewDB(opt Opt) DB {
-	dbs, _ := boltkv.Open(opt)
+func NewDB(name string) DB {
+	dbs, _ := boltkv.Open(name)
 	s := boltkv.BoltItem{
 		Db: dbs,
 	}

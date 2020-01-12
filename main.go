@@ -6,13 +6,10 @@ import (
 )
 
 func main() {
-	opt := db.Opt{
-		Name: "db1.db",
-		Mode: 0666,
-	}
-	newDB := db.NewDB(opt)
+
+	newDB := db.NewDB("my.db")
 	defer newDB.Item.Close()
 	newDB.Item.Set([]byte("123112"), []byte("qwer"))
-	server.StartServer()
+	server.StartServer(newDB.Item)
 
 }
