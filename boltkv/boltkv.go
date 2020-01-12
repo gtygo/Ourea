@@ -1,6 +1,8 @@
 package boltkv
 
 import (
+	"log"
+
 	"github.com/boltdb/bolt"
 )
 
@@ -9,12 +11,12 @@ type BoltItem struct {
 }
 
 func Open(name string) (*bolt.DB, error) {
+	log.Printf("[BOLTKV] open db: %s", name)
 	db, err := bolt.Open(name, 0666, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	println("open")
 	return db, nil
 }
 
@@ -23,16 +25,16 @@ func (bki *BoltItem) Close() {
 }
 
 func (bki *BoltItem) Get(k []byte) ([]byte, error) {
-	println("get")
+	log.Printf("[BOLTKV] get: %s ", k)
 	return nil, nil
 }
 
 func (bki *BoltItem) Set(k []byte, v []byte) error {
-	println("set")
+	log.Printf("[BOLTKV] set: %s,%s ", k, v)
 	return nil
 }
 
 func (bki *BoltItem) Delete(k []byte) error {
-	println("delete")
+	log.Printf("[BOLTKV] delete: %s ", k)
 	return nil
 }

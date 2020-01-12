@@ -14,7 +14,7 @@ const (
 )
 
 func StartClient() {
-
+	log.Printf("[RPC] client start")
 	conn, err := grpc.Dial(addr, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalln(err)
@@ -25,18 +25,19 @@ func StartClient() {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.Set(ctx, &pb.SetRequest{
+	req := &pb.SetRequest{
 		Key:   "key1",
 		Value: "value1",
-	})
+	}
+	r, err := c.Set(ctx, req)
 	if err != nil {
 		log.Fatal("set error:", err)
 	}
-	log.Println("get response :", r.GetMessage())
+	log.Printf("[RPC] client received %s", r.Message)
 
 }
 
-func main(){
+func main() {
 
 	StartClient()
 

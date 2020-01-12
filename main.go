@@ -9,7 +9,6 @@ func main() {
 
 	newDB := db.NewDB("my.db")
 	defer newDB.Item.Close()
-	newDB.Item.Set([]byte("123112"), []byte("qwer"))
 	server.StartServer(newDB.Item)
 
 }
