@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
-	"google.golang.org/grpc"
 	"log"
 	"time"
 
 	pb "github.com/gtygo/Ourea/rpc/pb"
+
+	"google.golang.org/grpc"
 )
 
 const (
@@ -35,6 +36,23 @@ func StartClient() {
 	}
 	log.Printf("[RPC] client received %s", r.Message)
 
+	reqGet := &pb.GetRequest{
+		Key: "key1",
+	}
+	resp, err := c.Get(ctx, reqGet)
+	if err != nil {
+		log.Fatal("get error", err)
+	}
+	log.Printf("[RPC] client received %s , %s", resp.Message, resp.Value)
+
+	reqDel := &pb.DelRequest{
+		Key: "key1",
+	}
+	delResp, err := c.Delete(ctx, reqDel)
+	log.Printf("delete: %s", delResp)
+	
+	respget, err := c.Get(ctx, reqGet)
+	log.Printf("get: %s,%s", respget, err)
 }
 
 func main() {
