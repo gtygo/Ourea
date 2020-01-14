@@ -21,14 +21,14 @@ func StartServer(item kv.Item) {
 	logrus.Infof("[RPC] server start, listening at TCP %s", port)
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
-		logrus.Warnf("failed to listen:", err)
+		logrus.Warnf("failed to listen: %s", err)
 	}
 	s := grpc.NewServer()
 	pb.RegisterCrudServer(s, &server{
 		item: item,
 	})
 	if err = s.Serve(lis); err != nil {
-		logrus.Warnf("failed to serve:", err)
+		logrus.Warnf("failed to serve: %s", err)
 	}
 }
 
