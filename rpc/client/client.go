@@ -50,7 +50,7 @@ func StartClient() {
 	}
 	delResp, err := c.Delete(ctx, reqDel)
 	log.Printf("delete: %s", delResp)
-	
+
 	respget, err := c.Get(ctx, reqGet)
 	log.Printf("get: %s,%s", respget, err)
 }
