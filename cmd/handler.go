@@ -2,23 +2,33 @@ package main
 
 import (
 	"bufio"
-	"fmt"
+	"github.com/sirupsen/logrus"
 	"io"
 	"os"
 )
 
-func main() {
-	fmt.Println("asfgfasadfgfdas")
+func CmdRoot(addr string) {
+	// c:=client.StartClient(addr)
+	logrus.Info("[CMD] start waiting for command line...")
 	for {
-		fmt.Print("> ")
+		print("> ")
 		rd := bufio.NewReader(os.Stdin)
-		s, err := rd.ReadString('\n')
+		line, err := rd.ReadString('\n')
 		if err != nil {
 			if err == io.EOF {
-				fmt.Println("bye")
+				println("bye")
 				return
 			}
+			logrus.Warnf("[CMD] client got error: %s when read command line")
+			println("got error ,pls retry")
 		}
-		fmt.Println(s[:len(s)-1])
+		println(line[:len(line)-1])
 	}
+}
+
+func dispatch() {
+}
+
+func parser(line string) {
+	println("parse input command line ....")
 }

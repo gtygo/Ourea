@@ -1,62 +1,60 @@
-package main
+package client
 
 import (
 	"context"
-	"log"
-	"time"
 
 	pb "github.com/gtygo/Ourea/rpc/pb"
 
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
 
-const (
-	addr = "localhost:50051"
-)
-
-func StartClient() {
-	log.Printf("[RPC] client start")
+func StartClient(addr string) pb.CrudClient {
+	logrus.Info("[RPC] client started")
 	conn, err := grpc.Dial(addr, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		log.Fatalln(err)
+		logrus.Fatalln("[RPC] client got error:", err)
 	}
 	defer conn.Close()
 
-	c := pb.NewCrudClient(conn)
+	return pb.NewCrudClient(conn)
+}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
+func Set(k string, v string, c pb.CrudClient, ctx context.Context) error {
 	req := &pb.SetRequest{
-		Key:   "key1",
-		Value: "value1",
+		Key:   k,
+		Value: v,
 	}
 	r, err := c.Set(ctx, req)
 	if err != nil {
-		log.Fatal("set error:", err)
+		logrus.Fatal("[RPC] client set error:", err)
 	}
-	log.Printf("[RPC] client received %s", r.Message)
-
-	reqGet := &pb.GetRequest{
-		Key: "key1",
-	}
-	resp, err := c.Get(ctx, reqGet)
-	if err != nil {
-		log.Fatal("get error", err)
-	}
-	log.Printf("[RPC] client received %s , %s", resp.Message, resp.Value)
-
-	reqDel := &pb.DelRequest{
-		Key: "key1",
-	}
-	delResp, err := c.Delete(ctx, reqDel)
-	log.Printf("delete: %s", delResp)
-
-	respget, err := c.Get(ctx, reqGet)
-	log.Printf("get: %s,%s", respget, err)
+	logrus.Infof("[RPC] client received %s", r.Message)
+	return nil
 }
 
-func main() {
+func Get(k string, c pb.CrudClient, ctx context.Context) (string, error) {
+	reqGet := &pb.GetRequest{
+		Key: k,
+	}
+	r, err := c.Get(ctx, reqGet)
+	if err != nil {
+		logrus.Fatal("[RPC] client get error", err)
+		return r.Message, err
+	}
+	logrus.Infof("[RPC] client received %s , %s", r.Message, r.Value)
+	return r.Value, nil
+}
 
-	StartClient()
-
+func Del(k string, c pb.CrudClient, ctx context.Context) error {
+	reqDel := &pb.DelRequest{
+		Key: k,
+	}
+	r, err := c.Delete(ctx, reqDel)
+	if err != nil {
+		logrus.Fatalf("[RPC] client delete error: %s", err)
+		return err
+	}
+	logrus.Infof("[RPC] client received %s", r.Message)
+	return nil
 }
