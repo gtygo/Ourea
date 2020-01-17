@@ -1,5 +1,7 @@
 package main
 
+import "github.com/gtygo/Ourea/rpc/client"
+
 func main() {
-	CmdRoot("localhost:50051")
+	client.StartClient("localhost:50051")
 }
