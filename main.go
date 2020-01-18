@@ -9,5 +9,4 @@ func main() {
 	newDB := db.NewDB("my.db")
 	defer newDB.Item.Close()
 	server.StartServer(newDB.Item)
-
 }

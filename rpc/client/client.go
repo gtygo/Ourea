@@ -13,11 +13,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-const (
-	MsgSuccess = "Success"
-	MsgFailed  = "Failed"
-)
-
 var (
 	ErrCommandArgs = errors.New("command args error")
 )
@@ -40,7 +35,7 @@ func StartClient(addr string) {
 				println("bye")
 				return
 			}
-			logrus.Warnf("[RPC] client got error: %s when read command line")
+			logrus.Warnf("[RPC] client got error: %s when read command line", err)
 			println("got error ,pls retry")
 		}
 		args := parser(line)
