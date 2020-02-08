@@ -1,12 +1,11 @@
 package main
 
-import (
-	"github.com/gtygo/Ourea/db"
-	"github.com/gtygo/Ourea/rpc/server"
-)
+import "sort"
 
 func main() {
-	newDB := db.NewDB("my.db")
-	defer newDB.Item.Close()
-	server.StartServer(newDB.Item)
+	//redis.StartListen()
+
+	s:=[]int{0,3,8,2,5,7,0}
+	sort.Sort(s)
+
 }

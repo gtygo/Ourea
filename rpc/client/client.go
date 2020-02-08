@@ -99,6 +99,7 @@ func parser(line string) []string {
 }
 
 func dispatch(args []string, c pb.CrudClient, ctx context.Context) (string, error) {
+	println("---------------------:", args)
 	if len(args) == 0 {
 		return "", ErrCommandArgs
 	}
