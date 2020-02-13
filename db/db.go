@@ -11,12 +11,10 @@ type DB struct {
 }
 
 //NewDB return a DB instance
-func NewDB(name string) DB {
+func NewDB(name string) kv.Item {
 	dbs, _ := boltkv.Open(name)
 	s := boltkv.BoltItem{
 		Db: dbs,
 	}
-	return DB{
-		Item: &s,
-	}
+	return &s
 }
