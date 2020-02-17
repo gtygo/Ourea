@@ -5,9 +5,9 @@ import (
 	"strings"
 )
 
-func GetRequest(args []string)[]byte{
-	req:=[]string{
-		"*"+strconv.Itoa(len(args)),
+func GetRequest(args []string) []byte {
+	req := []string{
+		"*" + strconv.Itoa(len(args)),
 	}
 	for _, arg := range args {
 		req = append(req, "$"+strconv.Itoa(len(arg)))

@@ -2,11 +2,11 @@ package server
 
 import (
 	"fmt"
-	"github.com/gtygo/Ourea/redis"
 	"net"
 	"strings"
 
 	"github.com/gtygo/Ourea/kv"
+	"github.com/gtygo/Ourea/redis"
 	"github.com/sirupsen/logrus"
 )
 
@@ -55,14 +55,14 @@ func (s *Server) handleConn(c net.Conn) {
 			v, _ := redis.GetReply(buf)
 			strData := fmt.Sprintf("%s", v)
 			data := handleRedisStr(strData)
-			ans,err:=s.DispatchCommand(data)
-			if err!=nil{
-				ans=err.Error()
+			ans, err := s.DispatchCommand(data)
+			if err != nil {
+				ans = err.Error()
 			}
-			if ans==""{
-				ans="OK"
+			if ans == "" {
+				ans = "OK"
 			}
-			redisResp:=redis.GetRequest(append([]string{},ans))
+			redisResp := redis.GetRequest(append([]string{}, ans))
 			c.Write(redisResp)
 		}
 	}
