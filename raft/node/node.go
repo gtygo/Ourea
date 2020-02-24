@@ -6,7 +6,7 @@ import (
 
 	"github.com/gtygo/Ourea/raft/rpc/client"
 	"github.com/gtygo/Ourea/raft/rpc/pb"
-	"github.com/sirupsen/logrus"
+	. "github.com/sirupsen/logrus"
 )
 
 const (
@@ -75,58 +75,58 @@ func NewNode(addr string,id uint64) *Node {
 
 func (n *Node) Loop() {
 
-	logrus.Infof("startup raft node: %v ,node state is %v (follower)", n.Id, n.NodeState)
+	Infof("startup raft node: %v ,node state is %v (follower)", n.Id, n.NodeState)
 
 	for {
 
 		switch n.NodeState {
 
 		case FOLLOWER:
-			logrus.Infof("now state is follower")
+			Infof("now state is follower")
 
 			select {
 			case x := <-n.Client.ReqVoteCh:
-				logrus.Infof("follower received request vote msg %v", x)
+				Infof("follower received request vote msg %v", x)
 				n.checkCurrentTerm(x)
 			case x := <-n.Client.AppendEntriesCh:
-				logrus.Infof("follower received append entries msg %v", x)
+				Infof("follower received append entries msg %v", x)
 				n.checkCurrentTerm(x)
 			case <-time.After(30 * time.Second):
-				logrus.Infof("follower timeout ,start new round,%v", 1)
+				Infof("follower timeout ,start new round,%v", 1)
 				//todo: start leader election
 				n.startLeaderElection()
 			}
 
 		case CANDIDATE:
-			logrus.Infof("now state is candidate")
+			Infof("now state is candidate")
 			select {
 			case x := <-n.Client.ReqVoteCh:
-				logrus.Infof("candidate received request vote msg %v", x)
+				Infof("candidate received request vote msg %v", x)
 				n.checkCurrentTerm(x)
 				n.voteCount++
 				if n.voteCount>uint64(len(n.ClusterNodeAddr)+1)/2{
 					n.NodeState=LEADER
 				}
 			case x := <-n.Client.AppendEntriesCh:
-				logrus.Infof("candidate received append entries msg %v", x)
+				Infof("candidate received append entries msg %v", x)
 				n.checkCurrentTerm(x)
 
 			case <-time.After(25 * time.Second):
-				logrus.Infof("candidate timeout ,start new round,%v", 1)
+				Infof("candidate timeout ,start new round,%v", 1)
 				//todo: start leader election
 				n.startLeaderElection()
 
 			}
 
 		case LEADER:
-			logrus.Infof("now state is leader")
+			Infof("now state is leader")
 
 			//不断发送心跳给follower节点
 			// todo： 接收客户端请求
 			select 	{
 			//收到了客户端发来的请求
 			case x:= <- n.ClientReqCh:
-				logrus.Infof("逻辑层收到了客户端请求rpc 信号")
+				Infof("逻辑层收到了客户端请求rpc 信号")
 				//发送append entries rpc
 				entries:=make([]*pb.Instruction,0)
 				entries=append(entries,&x)
@@ -140,7 +140,7 @@ func (n *Node) Loop() {
 				},true)
 			//收到appendentries 的回复
 			case x:=<-n.Client.AppendEntriesCh:
-				logrus.Infof("leader received append entries log resp: %v",x)
+				Infof("leader received append entries log resp: %v",x)
 				n.LogRespCount++
 				//收到follower节点都改变了自身的状态机
 				if n.LogRespCount==2{
@@ -149,7 +149,7 @@ func (n *Node) Loop() {
 
 			default:
 				//发送heart beat
-				logrus.Infof("leader send normal heart beat rpc")
+				Infof("leader send normal heart beat rpc")
 				time.Sleep(time.Second*5)
 				n.boardCastHeartBeat(&pb.AppendEntriesReq{},false)
 			}
@@ -165,7 +165,7 @@ func (n *Node) checkCurrentTerm(T uint64) {
 }
 
 func (n *Node) startLeaderElection() {
-	logrus.Infof("start leader election......")
+	Infof("start leader election......")
 	n.LogRespCount=0
 
 	// 1.切换状态为候选人
@@ -187,7 +187,7 @@ func (n *Node) switchToCandidate() {
 }
 
 func (n *Node) receiveVote() {
-	logrus.Infof("start listening request vote rpc message....")
+	Infof("start listening request vote rpc message....")
 	count := 0
 	for {
 		select {
@@ -256,9 +256,9 @@ func (n *Node)HandleAppendEntriesInfo(entries []*pb.Instruction,term uint64){
 		}
 	}
 
-	logrus.Infof("==== now state machine is :")
-	logrus.Info("logs: ",n.Log)
-	logrus.Info(n.StateMachine)
+	Infof("==== now state machine is :")
+	Info("logs: ",n.Log)
+	Info(n.StateMachine)
 
 }
 
