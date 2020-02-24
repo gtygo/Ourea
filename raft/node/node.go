@@ -4,8 +4,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/gtygo/raft/rpc/client"
-	"github.com/gtygo/raft/rpc/pb"
+	"github.com/gtygo/Ourea/raft/rpc/client"
+	"github.com/gtygo/Ourea/raft/rpc/pb"
 	"github.com/sirupsen/logrus"
 )
 

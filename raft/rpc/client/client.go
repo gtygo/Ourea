@@ -2,7 +2,7 @@ package client
 
 import (
 	"context"
-	"github.com/gtygo/raft/rpc/pb"
+	"github.com/gtygo/Ourea/raft/rpc/pb"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"log"

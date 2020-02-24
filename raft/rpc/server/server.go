@@ -4,8 +4,8 @@ import (
 	"context"
 	"net"
 
-	"github.com/gtygo/raft/node"
-	"github.com/gtygo/raft/rpc/pb"
+	"github.com/gtygo/Ourea/raft/node"
+	"github.com/gtygo/Ourea/raft/rpc/pb"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
@@ -85,5 +85,4 @@ func StartRpcServer(n *node.Node) {
 	if err := s.Serve(lis); err != nil {
 		logrus.Fatal(err)
 	}
-
 }
