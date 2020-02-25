@@ -2,24 +2,21 @@ package server
 
 import (
 	"fmt"
+	rpcserver "github.com/gtygo/Ourea/raft/rpc/server"
 	"net"
 	"strings"
 
-	"github.com/gtygo/Ourea/kv"
 	"github.com/gtygo/Ourea/redis"
 	"github.com/sirupsen/logrus"
 )
 
 type Server struct {
 	RedisPort string
-
-	DbName string
-
-	Db kv.Item
+	Rpc *rpcserver.Server
 }
 
-func (s *Server) StartServer() {
-	logrus.Infof("# warning: using the default config. In order to specify a config file use redis-server /path/redis.conf")
+func (s *Server) StartKVServer() {
+	logrus.Infof("kv server is starting listening at %v \n",s.RedisPort)
 	c, _ := net.Listen("tcp", s.RedisPort)
 	for {
 		a, _ := c.Accept()
@@ -55,15 +52,43 @@ func (s *Server) handleConn(c net.Conn) {
 			v, _ := redis.GetReply(buf)
 			strData := fmt.Sprintf("%s", v)
 			data := handleRedisStr(strData)
-			ans, err := s.DispatchCommand(data)
-			if err != nil {
-				ans = err.Error()
+			logrus.Info("kv server收到客户端请求 ..... ",data)
+			if s.Rpc.IsLeader(){
+				if data[0]=="GET"{
+					ans, err := s.DispatchCommand(data)
+					if err != nil {
+						ans = err.Error()
+					}
+					redisResp := redis.GetRequest(append([]string{}, ans))
+					c.Write(redisResp)
+				}else{
+					s.Rpc.HandleCommand(data)
+					logrus.Info("follower 处理完成，此时leader可进行持久化修改")
+					ans, err := s.DispatchCommand(data)
+					if err != nil {
+						ans = err.Error()
+					}
+					if ans == "" {
+						ans = "OK"
+					}
+					redisResp := redis.GetRequest(append([]string{}, ans))
+					c.Write(redisResp)
+				}
+
+			}else{
+				if data[0]=="SET"||data[0]=="DEL"{
+					ans:="(error) ERR syntax error"
+					redisResp := redis.GetRequest(append([]string{}, ans))
+					c.Write(redisResp)
+				}else{
+					ans, err := s.DispatchCommand(data)
+					if err != nil {
+						ans = err.Error()
+					}
+					redisResp := redis.GetRequest(append([]string{}, ans))
+					c.Write(redisResp)
+				}
 			}
-			if ans == "" {
-				ans = "OK"
-			}
-			redisResp := redis.GetRequest(append([]string{}, ans))
-			c.Write(redisResp)
 		}
 	}
 }
@@ -71,5 +96,8 @@ func (s *Server) handleConn(c net.Conn) {
 func handleRedisStr(info string) []string {
 	ans := strings.Replace(info, "[", "", 1)
 	ans = strings.Replace(ans, "]", "", 1)
-	return strings.Split(ans, " ")
+	ansArr:=strings.Split(ans, " ")
+	ansArr[0]=strings.ToUpper(ansArr[0])
+	return ansArr
 }
+

@@ -1,4 +1,4 @@
-package server
+package rpcserver
 
 import (
 	"context"
@@ -61,7 +61,28 @@ func (s *Server) AppendEntries(ctx context.Context, req *pb.AppendEntriesReq) (*
 	}, nil
 }
 
+
+func (s *Server)HandleCommand(data []string){
+
+
+
+	if len(data)<=2{
+		data=append(data,data[1])
+	}
+	s.HandleClientCommand(nil,&pb.ClientCommandReq{
+		Ins:                  &pb.Instruction{
+			Type:                 data[0],
+			Key:                  data[1],
+			Value:                data[2],
+		},
+	})
+}
+
 func (s *Server)HandleClientCommand(ctx context.Context,req *pb.ClientCommandReq) (*pb.ClientCommandResp, error){
+
+
+
+
 	logrus.Info("收到客户端请求rpc..... ")
 
 	s.node.ClientReqCh<-*req.Ins
@@ -74,15 +95,39 @@ func (s *Server)HandleClientCommand(ctx context.Context,req *pb.ClientCommandReq
 	return &pb.ClientCommandResp{Success:true}, nil
 }
 
-func StartRpcServer(n *node.Node) {
-	logrus.Infof("raft rpc server start listening at: %s ...", n.Addr)
-	lis, err := net.Listen("tcp", n.Addr)
+
+func NewRpcServer(n *node.Node) *Server {
+	return &Server{
+		node:   n,
+	}
+}
+
+func (s *Server)StartRpcServer() {
+	logrus.Infof("raft rpc server start listening at: %s ...", s.node.Addr)
+	lis, err := net.Listen("tcp", s.node.Addr)
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	s := grpc.NewServer()
-	pb.RegisterRaftServiceServer(s, &Server{node:n})
-	if err := s.Serve(lis); err != nil {
+	grpcs := grpc.NewServer()
+	pb.RegisterRaftServiceServer(grpcs, s)
+	if err := grpcs.Serve(lis); err != nil {
 		logrus.Fatal(err)
 	}
 }
+
+func (s *Server)IsLeader()bool{
+	return s.node.NodeState==node.LEADER
+}
+
+func (s *Server)Get(k []byte)([]byte,error){
+	return s.node.Db.Get(k)
+}
+
+func (s *Server)Set(k []byte,v []byte)error{
+	return s.node.Db.Set(k,v)
+}
+
+func (s *Server)Del(k []byte)error{
+	return s.node.Db.Delete(k)
+}
+

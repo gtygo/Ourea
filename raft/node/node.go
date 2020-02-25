@@ -1,10 +1,12 @@
 package node
 
 import (
+
 	"math/rand"
 	"time"
 
 	"github.com/gtygo/Ourea/raft/rpc/client"
+	"github.com/gtygo/Ourea/kv"
 	"github.com/gtygo/Ourea/raft/rpc/pb"
 	. "github.com/sirupsen/logrus"
 )
@@ -48,9 +50,11 @@ type Node struct {
 	//Volatile state on leaders:
 	NextIndex  []uint64
 	MatchIndex []uint64
+
+	Db kv.Item
 }
 
-func NewNode(addr string,id uint64) *Node {
+func NewNode(addr string,id uint64,db kv.Item) *Node {
 
 	n := &Node{
 		Id:              id,
@@ -68,6 +72,7 @@ func NewNode(addr string,id uint64) *Node {
 			AppendEntriesCh:     make(chan uint64, 10),
 			AppendEntriesRespCh: make(chan uint64, 10),
 		},
+		Db:db,
 	}
 
 	return n
@@ -90,6 +95,10 @@ func (n *Node) Loop() {
 				n.checkCurrentTerm(x)
 			case x := <-n.Client.AppendEntriesCh:
 				Infof("follower received append entries msg %v", x)
+
+
+
+
 				n.checkCurrentTerm(x)
 			case <-time.After(30 * time.Second):
 				Infof("follower timeout ,start new round,%v", 1)
@@ -145,6 +154,7 @@ func (n *Node) Loop() {
 				//收到follower节点都改变了自身的状态机
 				if n.LogRespCount==2{
 					n.ClientReqDoneCh<- struct{}{}
+					n.LogRespCount=0
 				}
 
 			default:
@@ -251,8 +261,10 @@ func (n *Node)HandleAppendEntriesInfo(entries []*pb.Instruction,term uint64){
 
 		if x.Type=="SET"{
 			n.StateMachine[x.Key]=x.Value
+			n.Db.Set([]byte(x.Key),[]byte(x.Value))
 		} else if x.Type=="DEL"{
 			delete(n.StateMachine,x.Key)
+			n.Db.Delete([]byte(x.Key))
 		}
 	}
 
