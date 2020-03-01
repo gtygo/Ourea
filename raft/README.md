@@ -1,2 +1,0 @@
-# raft
-raft algorithm

@@ -9,15 +9,11 @@ func (s *Server) DispatchCommand(info []string) (string, error) {
 
 	switch cmd {
 	case "SET":
-		error = s.Rpc.Set([]byte(data[0]), []byte(data[1]))
+		s.c.Set(data[0],data[1])
 	case "GET":
-		v, err := s.Rpc.Get([]byte(data[0]))
-		if err != nil {
-			return err.Error(), err
-		}
-		return string(v), nil
+		return s.c.Get(data[0])
 	case "DEL":
-		error = s.Rpc.Del([]byte(data[0]))
+		s.c.Del(data[0])
 	}
 	if error != nil {
 		return "", error

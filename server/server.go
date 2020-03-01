@@ -2,8 +2,10 @@ package server
 
 import (
 	"fmt"
-	rpcserver "github.com/gtygo/Ourea/raft/rpc/server"
+	"github.com/gtygo/Ourea/cache"
 	"net"
+
+
 	"strings"
 
 	"github.com/gtygo/Ourea/redis"
@@ -12,12 +14,23 @@ import (
 
 type Server struct {
 	RedisPort string
-	Rpc *rpcserver.Server
+	c *cache.Cache
+}
+
+func NewServer(port string)*Server{
+	return &Server{
+		RedisPort: port,
+		c:cache.NewCache(),
+	}
 }
 
 func (s *Server) StartKVServer() {
 	logrus.Infof("kv server is starting listening at %v \n",s.RedisPort)
-	c, _ := net.Listen("tcp", s.RedisPort)
+	c, err := net.Listen("tcp", s.RedisPort)
+	if err!=nil{
+		logrus.Fatal("start listener failed !",err)
+	}
+
 	for {
 		a, _ := c.Accept()
 		go s.handleConn(a)
@@ -52,44 +65,17 @@ func (s *Server) handleConn(c net.Conn) {
 			v, _ := redis.GetReply(buf)
 			strData := fmt.Sprintf("%s", v)
 			data := handleRedisStr(strData)
-			logrus.Info("kv server收到客户端请求 ..... ",data)
-			if s.Rpc.IsLeader(){
-				if data[0]=="GET"{
-					ans, err := s.DispatchCommand(data)
-					if err != nil {
-						ans = err.Error()
-					}
-					redisResp := redis.GetRequest(append([]string{}, ans))
-					c.Write(redisResp)
-				}else{
-					s.Rpc.HandleCommand(data)
-					logrus.Info("follower 处理完成，此时leader可进行持久化修改")
-					ans, err := s.DispatchCommand(data)
-					if err != nil {
-						ans = err.Error()
-					}
-					if ans == "" {
-						ans = "OK"
-					}
-					redisResp := redis.GetRequest(append([]string{}, ans))
-					c.Write(redisResp)
-				}
+			logrus.Info("kv server收到客户端请求 ..... ")
 
-			}else{
-				if data[0]=="SET"||data[0]=="DEL"{
-					ans:="(error) ERR syntax error"
-					redisResp := redis.GetRequest(append([]string{}, ans))
-					c.Write(redisResp)
-				}else{
 					ans, err := s.DispatchCommand(data)
 					if err != nil {
 						ans = err.Error()
 					}
 					redisResp := redis.GetRequest(append([]string{}, ans))
 					c.Write(redisResp)
-				}
+
 			}
-		}
+
 	}
 }
 
