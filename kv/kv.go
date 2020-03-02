@@ -1,8 +1,8 @@
 package kv
 
 type Item interface {
-	Get(k []byte) ([]byte, error)
-	Set(k []byte, v []byte) error
+	Get() (map[string]interface{}, error)
+	Set(map[string]interface{}) error
 	Delete(k []byte) error
 	Close()
 }

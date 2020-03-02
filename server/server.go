@@ -2,12 +2,11 @@ package server
 
 import (
 	"fmt"
-	"github.com/gtygo/Ourea/cache"
 	"net"
-
-
 	"strings"
 
+	"github.com/gtygo/Ourea/boltkv"
+	"github.com/gtygo/Ourea/cache"
 	"github.com/gtygo/Ourea/redis"
 	"github.com/sirupsen/logrus"
 )
@@ -30,7 +29,11 @@ func (s *Server) StartKVServer() {
 	if err!=nil{
 		logrus.Fatal("start listener failed !",err)
 	}
-
+	//cover dump.rdb
+	if err:=s.c.Cover();err!=nil&&err!=boltkv.ErrBucketNotFound{
+		logrus.Fatal("cover dump.rdb failed:",err)
+	}
+	logrus.Info("rdb file cover success,data length:",len(s.c.GetAllKey()))
 	for {
 		a, _ := c.Accept()
 		go s.handleConn(a)
@@ -69,9 +72,9 @@ func (s *Server) handleConn(c net.Conn) {
 
 					ans, err := s.DispatchCommand(data)
 					if err != nil {
-						ans = err.Error()
+						ans = []string{err.Error()}
 					}
-					redisResp := redis.GetRequest(append([]string{}, ans))
+					redisResp := redis.GetRequest(append([]string{}, ans...))
 					c.Write(redisResp)
 
 			}

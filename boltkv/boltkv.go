@@ -11,41 +11,56 @@ type BoltItem struct {
 	Db *bolt.DB
 }
 
-func Open(name string) (*bolt.DB, error) {
+var ErrBucketNotFound =errors.New("bucket not found")
+
+func Open(name string) (*BoltItem, error) {
 	logrus.Infof("[BOLTKV] open db: %s", name)
 	db, err := bolt.Open(name, 0666, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return db, nil
+	return &BoltItem{Db:db}, nil
 }
 
 func (bki *BoltItem) Close() {
 	bki.Db.Close()
 }
 
-func (bki *BoltItem) Get(k []byte) (value []byte, err error) {
-	logrus.Infof("[BOLTKV] get: %s ", k)
+func (bki *BoltItem) Get() (m map[string]interface{}, err error) {
+	logrus.Infof("[BOLTKV] get: %s ", )
+	m=make(map[string]interface{})
 	err = bki.Db.View(func(tx *bolt.Tx) error {
 		if bucket := tx.Bucket([]byte("bucket")); bucket != nil {
-			value = bucket.Get(k)
+
+			if err := bucket.ForEach(func(k, v []byte) error {
+				m[string(k)]=string(v)
+				return nil
+			}); err != nil {
+				return err
+			}
 			return nil
 		}
-		return errors.New("bucket not found")
+		return ErrBucketNotFound
 	})
-	return value, err
+	return m, err
 }
 
-func (bki *BoltItem) Set(k []byte, v []byte) error {
-	logrus.Infof("[BOLTKV] set: %s,%s ", k, v)
+func (bki *BoltItem) Set(items map[string]interface{}) error {
+	logrus.Infof("[BOLTKV] set: ",)
 	if err := bki.Db.Update(func(tx *bolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists([]byte("bucket"))
 		if err != nil {
 			return err
 		}
-		return bucket.Put(k, v)
 
+		for k,_:=range items{
+			v:=items[k].(string)
+			if err:=bucket.Put([]byte(k),[]byte(v));err!=nil{
+				return err
+			}
+		}
+		return nil
 	}); err != nil {
 		logrus.Warnf("[BOLTKV] set failed: %s", err)
 		return err
