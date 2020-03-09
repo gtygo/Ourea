@@ -32,6 +32,9 @@ redis-cli -p 3306
 * SAVE
 * BGSAVE
 
+## design
+
+![avatar](https://s2.ax1x.com/2020/03/09/89BGUH.png)
 
 
 ## plan

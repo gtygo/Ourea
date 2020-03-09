@@ -28,7 +28,6 @@ func (bki *BoltItem) Close() {
 }
 
 func (bki *BoltItem) Get() (m map[string]interface{}, err error) {
-	logrus.Infof("[BOLTKV] get: %s ", )
 	m=make(map[string]interface{})
 	err = bki.Db.View(func(tx *bolt.Tx) error {
 		if bucket := tx.Bucket([]byte("bucket")); bucket != nil {
@@ -47,7 +46,6 @@ func (bki *BoltItem) Get() (m map[string]interface{}, err error) {
 }
 
 func (bki *BoltItem) Set(items map[string]interface{}) error {
-	logrus.Infof("[BOLTKV] set: ",)
 	if err := bki.Db.Update(func(tx *bolt.Tx) error {
 		bucket, err := tx.CreateBucketIfNotExists([]byte("bucket"))
 		if err != nil {
