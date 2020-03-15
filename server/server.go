@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"strings"
+	"time"
 
 	"github.com/gtygo/Ourea/boltkv"
 	"github.com/gtygo/Ourea/cache"
@@ -14,6 +15,7 @@ import (
 type Server struct {
 	RedisPort string
 	c *cache.Cache
+	OldT map[string]time.Time
 }
 
 func NewServer(port string)*Server{
@@ -33,6 +35,7 @@ func (s *Server) StartKVServer() {
 	if err:=s.c.Cover();err!=nil&&err!=boltkv.ErrBucketNotFound{
 		logrus.Fatal("cover dump.rdb failed:",err)
 	}
+	go s.CleanOldKey()
 	logrus.Info("rdb file cover success,data length:",len(s.c.GetAllKey()))
 	for {
 		a, _ := c.Accept()
@@ -90,3 +93,20 @@ func handleRedisStr(info string) []string {
 	return ansArr
 }
 
+func (s *Server)CleanOldKey(){
+	serverStartTime:=time.Now()
+
+	for {
+		time.Sleep(time.Second*10)
+
+		for k,_:=range s.OldT{
+			if time.Now().Sub(serverStartTime).Seconds() > float64(s.OldT[k].Second()){
+				s.c.Del(k)
+				delete(s.OldT,k)
+			}
+		}
+	}
+
+
+
+}
